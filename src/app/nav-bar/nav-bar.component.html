@@ -1,0 +1,64 @@
+<mat-toolbar fxLayout="row wrap" color="primary">
+    
+    <button 
+        mat-icon-button fxFlexOrder="1" 
+        fxFlexOrder.lt-sm="1"
+    >
+        <mat-icon>shop</mat-icon>
+    </button>
+
+    <span 
+        fxFlexOrder="2" 
+        fxFlexOrder.lt-sm="2"
+    >
+        Tienda
+    </span>
+
+    <app-search-bar 
+        fxLayoutAlign="center" 
+        fxFlex="1 1 auto"
+        fxFlexOrder="3"
+        fxFlex.lt-sm="100%"
+        fxFlexOrder.lt-sm="4"
+    >
+    </app-search-bar>
+    
+    <div 
+        fxLayoutAlign="end" 
+        fxFlexOrder="4" 
+        fxFlexOrder.lt-sm="3" 
+        fxFlex.lt-sm="1 1 auto"
+    >
+
+        <button 
+            routerLink="home"
+            mat-icon-button 
+            matTooltip="Todos los productos"
+        >
+            <mat-icon>apps</mat-icon>
+        </button>
+
+        <button 
+            routerLink="carrito"
+            mat-icon-button 
+            matTooltip="Carrito"
+        >
+            <mat-icon [matBadge]="getTotalCount()"matBadgeColor="warn">shopping_cart</mat-icon>
+        </button>
+
+        <button 
+            mat-icon-button 
+            matTooltip="Info about the action"
+        >
+            <mat-icon>archive</mat-icon>
+        </button>
+
+        <button 
+            (click)="onLogoutClick()"
+            mat-icon-button 
+            matTooltip="Salir"
+        >
+            <mat-icon>exit_to_app</mat-icon>
+        </button>
+    </div>
+</mat-toolbar>

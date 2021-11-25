@@ -1,0 +1,49 @@
+<mat-card class="carrito-contenedor" fxLayout="column">
+    <div class="header" fxHide.xs>
+      <span class="title-header">Carrito de compras</span>
+    </div>
+
+    <div [style.height]="'100%'" fxLayout="row" fxLayout.xs="column"> 
+
+      <div fxFlex="50%" class="carrito-item productos" fxFlexOrder="1" fxFlexOrder.xs="2">
+
+        <h1>Productos en la lista</h1>
+        <mat-selection-list *ngIf="getCarrito().length else loading">
+          <mat-list-item *ngFor="let producto of getCarrito(); index as position">
+            <img matListAvatar src="../../assets/images/{{producto.nombre}}.jpg" alt="...">
+            <h3 matLine> {{producto.nombre | titlecase}} </h3>
+            <p matLine>
+              <span>Precio base: {{producto.precio | currency}} </span>
+            </p>
+            <p matLine>
+              <span>Cantidad: {{producto.count}}</span>
+            </p>
+            
+            <p matLine>
+              <span>Subtotal: {{producto.subtotal | currency}} </span>
+            </p>
+
+            <button fxFlexOrder="3" mat-icon-button (click)="onClickRemoveItemFromCart(position)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-list-item>
+        </mat-selection-list>
+
+        <ng-template #loading>
+          <div [style.paddingLeft]="'10px'">No hay productos en el carrito</div>
+         </ng-template>
+
+      </div>
+      
+      <div fxFlex="50%" class="carrito-item total-container"  fxFlexOrder="2" fxFlexOrder.xs="1">
+        <div fxLayout="column" fxLayoutGap="10px">
+          <span class="title-header total">Total {{getTotal()|currency}}</span>
+          <button [disabled]="!getCarrito().length" mat-raised-button color="primary">Pagar</button>
+          <button [disabled]="!getCarrito().length" mat-button color="primary">Cancelar</button>
+        </div>
+        
+      </div>
+
+    </div>
+
+</mat-card>

@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Producto } from './producto-interface';
+import { ProductosService } from './productos.service';
+import { MainService } from './main.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +9,14 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'Tienda';
+  title: string = 'Tienda';
+  productos: Producto[];
+
+  constructor(private mainService: MainService, private servicioProductos: ProductosService){
+    this.productos = this.servicioProductos.getAllProducts();
+  }
+
+  isLogged(): boolean{
+    return this.mainService.isLogged();
+  }
 }

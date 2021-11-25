@@ -1,0 +1,49 @@
+.productos-contenedor{
+    height: 100%;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+.item div {
+    background-color: white;
+    padding: 5px;
+}
+
+.items_amount_count{
+    border: 1px solid rgb(202, 202, 202);
+    border-radius: 0;
+    outline: none;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.items_amount_count:focus{
+    border: 1px solid rgb(202, 202, 202);
+
+}
+.header{
+    padding-left: 10px;
+    padding-top: 40px;
+    padding-bottom: 20px;
+}
+
+.title-header{
+    font-weight: lighter;
+    font-size: 2.5rem;
+}
+
+mat-button{
+    padding: 0 !important;
+}
+
+mat-card-title:hover, h3:hover, img:hover{
+    cursor: pointer !important;
+}
+
+@media (max-width:700px) {
+    .title-header{
+       
+        font-size: 1.9rem;
+        padding-bottom: 20px;
+    }
+}

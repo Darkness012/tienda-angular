@@ -1,0 +1,40 @@
+<div class="conteiner-centered background-login">
+    
+    
+    <mat-card>
+        <h1 [style.alignSelf]="'center'" [style.fontSize]="'2.5rem'" [style.margin]="'20px'">Login</h1>
+        <form 
+            [formGroup] = "loginForm" 
+            (ngSubmit)="onSubmit()"
+            fxLayout="column"
+            fxLayoutGap="10px"
+            >
+
+            <mat-form-field appearance="outline">
+                <mat-label>User name</mat-label>
+                <input id="name" formControlName="user" matInput >
+                
+            </mat-form-field>
+
+            <mat-form-field  appearance="outline">
+                <mat-label>Password</mat-label>
+                <input matInput placeholder="password" type="password" formControlName="pass">
+            </mat-form-field>
+
+
+            <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">Entrar</button>
+
+        </form> 
+        <span *ngIf='error' [style.alignSelf]="'center'" [style.color]='"red"'>{{error}}</span>
+
+        
+        <div [style.alignSelf]="'center'" fxLayout="column" [style.marginTop]="'30px'" >
+            <span>No tienes cuenta? </span> 
+            <button mat-button color="primary" routerLink="../createaccount" >Crear cuenta</button>
+        </div>
+
+    </mat-card>
+
+    
+
+</div>

@@ -1,0 +1,11 @@
+mat-toolbar{
+    height: auto;
+}
+
+
+@media (max-width:"599px") {
+    mat-toolbar{
+        padding-top: 10px;
+    }
+    
+}
