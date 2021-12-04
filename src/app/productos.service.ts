@@ -1,4 +1,6 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { CarritoItem } from './carrito/carrito-item.interface';
 import { Producto } from './producto-interface';
 
@@ -7,31 +9,35 @@ import { Producto } from './producto-interface';
 })
 export class ProductosService {
 
-  private productos: Producto[] = [];
   private carritoProductos: CarritoItem[] = [];
-  private productsCount: number;
-  private currentFilter: string;
+  private currentFilter: string;  
 
-  constructor() { 
-    this.productsCount = 0;
+  private productos: Producto[];
+  private urlBase;
+
+  constructor(
+    private http: HttpClient
+  ) { 
+    this.urlBase = "http://localhost:3000/productos/";
+    this.productos = [];
     this.currentFilter = '';
-    this.productos = this.getProductos();
-    this.carritoProductos = this.getCarritoProductos();
-    this.updateProductsCount();
+    this.carritoProductos = [];
   }
 
-  updateProductsCount(): void{
-    let count: number = 0;
-    this.carritoProductos.forEach(item => {
-      count += item.count?item.count:0;
-    });
+  initlializeService(){
 
-    this.productsCount =  count;
   }
 
   //PRODUCTS GETTERS
-  getProductById(id: number): Producto{
-    return this.productos[id];
+  getProductById(user_id: number): Producto | any{
+
+    for (let index = 0; index < this.productos.length; index++) {
+      const element = this.productos[index];
+      
+      if(element.id == user_id) return element;
+    }
+
+    return false;
   }
   getAllProducts(): Producto[]{
     return this.productos;
@@ -44,9 +50,6 @@ export class ProductosService {
   getCarritoDeProductos(): CarritoItem[]{
     return this.carritoProductos;
   }
-  getTotalCount(): number{
-    return this.productsCount;
-  }
   getTotal(): number{
     let count: number = 0;
     this.carritoProductos.forEach(item => {
@@ -57,13 +60,49 @@ export class ProductosService {
   }
 
   //SETTERS
+  setProducts(productos: Producto[]){
+    this.productos = productos;
+  }
+  setCart(carrito: CarritoItem[]){
+    this.carritoProductos = carrito;
+  }
   setUnitsCountToProduct(poroductId: number, newCount: number){
     this.getProductById(poroductId).unidades = newCount;
   }
-  addItemToCart(item: CarritoItem){
-    this.carritoProductos.push(item);
-    this.updateProductsCount();
+  addItemToCart(item: CarritoItem):Observable<any>{
+    return this.http.post(this.urlBase+"carrito/nuevo-pedido", {
+      producto_id: item.producto_id,
+      cantidad: item.count
+    }, {
+      headers: new HttpHeaders({
+          'Access-Control-Allow-Origin':'*',
+         }), withCredentials:true
+    })
+
+    //this.carritoProductos.push(item);
   }
+  removeItemFromCart(pedido:CarritoItem):Observable<any>{
+    return this.http.delete(this.urlBase+"carrito/remove-pedido", {body: pedido, headers: new HttpHeaders({
+      'Access-Control-Allow-Origin':'*',
+     }), withCredentials:true})
+    //this.carritoProductos.splice(position,1);
+  }
+  cancelarCarrito():Observable<any>{
+    return this.http.delete(this.urlBase+"carrito/cancelar", {
+      headers: new HttpHeaders({
+          'Access-Control-Allow-Origin':'*',
+         }), withCredentials:true
+    });
+  }
+  pagarCarrito():Observable<any>{
+    return this.http.delete(this.urlBase+"carrito/pagar",{
+      headers: new HttpHeaders({
+          'Access-Control-Allow-Origin':'*',
+         }), withCredentials:true
+    });
+  }
+  
+
   setFilter(valor: string):void{
     this.currentFilter = valor;
   }
@@ -72,52 +111,49 @@ export class ProductosService {
   }
 
   //??
-  removeItemFromCart(position: number){
-    this.carritoProductos.splice(position,1);
-  }
+  
 
   //PETITIONS TO SERVER
-  private getProductos(): Producto[]{
-    return [
-      { id:0, nombre: "fresa", precio:25, unidades: 58, estado: true},
-      { id:1, nombre: "almendras", precio:25, unidades: 12 , estado: true},
-      { id:2, nombre: "ajo", precio:25, unidades: 25 , estado: true},
-      { id:3, nombre: "lychee", precio:25, unidades: 99 , estado: true},
-      { id:4, nombre: "arandanos", precio:25, unidades: 69 , estado: true},
-      { id:5, nombre: "naranja", precio:25, unidades: 25 , estado: true},
-      { id:6, nombre: "brocoli", precio:25, unidades: 65, estado: true },
-      { id:7, nombre: "aguacate", precio:25, unidades: 15 , estado: true},
-      { id:8, nombre: "calabaza", precio:25, unidades: 56 , estado: true},
-      { id:9, nombre: "canela", precio:25, unidades: 45, estado: true },
-      { id:10, nombre: "cebolla", precio:25, unidades: 45 , estado: true},
-      { id:11, nombre: "kiwi", precio:25, unidades: 49 , estado: true},
-      { id:12, nombre: "maiz", precio:25, unidades: 47, estado: true },
-      { id:13, nombre: "manzana", precio:25, unidades: 32 , estado: true},
-      { id:14, nombre: "papa", precio:25, unidades: 96 , estado: true},
-      { id:15, nombre: "pasta", precio:25, unidades: 95 , estado: true},
-      { id:16, nombre: "pimienta", precio:25, unidades: 25 , estado: true},
-      { id:17, nombre: "repollo", precio:25, unidades: 36 , estado: true},
-      { id:18, nombre: "tomate", precio:25, unidades: 25 , estado: true},
-      { id:19, nombre: "zanahoria", precio:25, unidades: 46, estado: true },
-    ];
+  private getProductos(): Observable<any>{
+    return this.http.get(this.urlBase, {
+      headers: new HttpHeaders({
+          'Access-Control-Allow-Origin':'*',
+         }), withCredentials:true
+    });
   }
-  private getCarritoProductos(): CarritoItem[]{
-
-    let carrito: CarritoItem[] = [
-      {producto_id: 1, count:2,},
-      {producto_id: 2, count:2},
-      {producto_id: 3, count:2},
-      {producto_id: 4, count:2},
-      {producto_id: 5, count:2}
-    ]
-
-    carrito.forEach(item=>{
-      item.nombre = this.getProductById(item.producto_id).nombre;
-      item.subtotal = this.getProductById(item.producto_id).precio*item.count;
-      item.precio = this.getProductById(item.producto_id).precio;
-    })
-
-    return [];
+  private getCart(): Observable<any>{
+    return this.http.get(this.urlBase+"carrito", {
+      headers: new HttpHeaders({
+          'Access-Control-Allow-Origin':'*',
+         }), withCredentials:true
+    });
   }
   
+  obtainProducts(callback?:Function):void{
+    this.getProductos().subscribe((respuesta:any)=>{
+      if(respuesta.success){
+
+        this.setProducts(respuesta.products);
+        this.setCart(respuesta.carrito);
+        
+        if(callback) callback(true)
+        console.log(respuesta);
+        
+      }else{
+        if(callback) callback();
+        console.log("Error: ", respuesta);
+      }
+    });
+  }
+
+  obtainCart(callback?:Function):void{
+    this.getCart().subscribe((respuesta:any)=>{
+
+        this.setCart(respuesta.pedidos);
+        
+        if(callback) callback(respuesta.pedidos);
+        
+    });
+  }
+
 }

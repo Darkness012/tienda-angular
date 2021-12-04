@@ -3,5 +3,4 @@ export interface Producto{
     nombre: string;
     precio: number;
     unidades: number;
-    estado: boolean;
 }

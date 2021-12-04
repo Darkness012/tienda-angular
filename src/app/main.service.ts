@@ -1,42 +1,75 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Usuario } from './user-interface';
 
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class MainService {
 
-  private logginStatus: boolean;
-  private userId: string;
+  private loginStatus: boolean = false;
+  private urlBase: string;
+  
+  constructor(private http: HttpClient) { 
+    this.urlBase = "http://localhost:3000/users/";
+    this.loginStatus = false;
+    this.getLogginStatus().subscribe((response:any)=>{
+      this.loginStatus = response.isLogged?true:false;
+      console.log(this.loginStatus);
+    })
 
-  constructor() { 
-    this.logginStatus = this.getLogginStatus();
-    this.userId = this.logginStatus?this.getLoggedUserId(): '';
   }
   
-  getUserId(): string{
-    return this.userId;
-  }
   isLogged():boolean{
-    return this.logginStatus;
+    return this.loginStatus;
+  } 
+  setLogginStatus(val:boolean){
+    this.loginStatus = val;
   }
 
-  setUserId(id: string):void{
-    this.logginStatus = true;
-    this.userId = id;
+  getCurrentUser():Observable<any>{
+    return this.http.get(this.urlBase+"info", {
+      headers: new HttpHeaders({
+          'Access-Control-Allow-Origin':'*',
+         }), withCredentials:true
+    });
   }
-  createNewUser(user: object){
+  validateUser(user: Usuario):Observable<object>{
+    return this.http.post(this.urlBase+"signup", user, {
+        
+        withCredentials: true
+    });
+  }
+
+  createNewUser(user: Usuario):Observable<object>{
+
+
     //CREATE NEW USER IN DATABASE
+    return this.http.post(this.urlBase+"create-account", user,{
+      headers: new HttpHeaders({
+          'Access-Control-Allow-Origin':'*',
+         }), withCredentials:true
+    });
   }
 
-  logOut():void{
-    this.logginStatus = false;
-    this.userId = '';
+  logOut():Observable<object>{
+    return this.http.post(this.urlBase+"logout", {},{
+      headers: new HttpHeaders({
+          'Access-Control-Allow-Origin':'*',
+         }), withCredentials: true
+    });
+
+    
   }
 
-  private getLogginStatus(): boolean{
-    return true;
-  }
-  private getLoggedUserId(): string{
-    return '';
+  getLogginStatus():Observable<object>{
+    return this.http.post(this.urlBase+"islogged", {}, {
+      headers: new HttpHeaders({
+          'Access-Control-Allow-Origin':'*',
+         }), withCredentials: true
+    });
   }
 }

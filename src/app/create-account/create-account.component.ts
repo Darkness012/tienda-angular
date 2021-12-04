@@ -14,38 +14,111 @@ export class CreateAccountComponent implements OnInit {
   registro: FormGroup;
   checkPasswords: ValidatorFn;
   controls: any; 
-  matcher: MyErrorStateMatcher
+  matcher: MyErrorStateMatcher;
+  showContent: boolean;
 
-  constructor( private mainService: MainService, private router: Router) {
-    this.matcher = new MyErrorStateMatcher();
-    this.controls = {
-      hidePass: true, 
-      hideConfirmPass: true
-    };
-    this.checkPasswords = (group: AbstractControl):  ValidationErrors | null => { 
-      let pass = group.get('password')?.value;
-      let confirmPass = group.get('confirmPassword')?.value
-      return pass === confirmPass ? null : { notSame: true }
-    }
-    this.registro = new FormGroup({
-      nombre: new FormControl('', [Validators.required, Validators.minLength(3)]),
-      apellido: new FormControl('', [Validators.required, Validators.minLength(3)]),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      telefono: new FormControl('', Validators.required),
-      password: new FormControl('', [Validators.required, Validators.minLength(6)]),
-      confirmPassword: new FormControl('', Validators.minLength(6)),
-      accept: new FormControl('',Validators.requiredTrue)
-    }, {validators:this.checkPasswords});
+  constructor( 
+    private mainService: MainService, 
+    private router: Router
+    ) {
+      this.showContent = false;
+
+      this.mainService.getLogginStatus().subscribe((respuesta:any)=>{
+        console.log(respuesta);
+        
+        if(respuesta.isLogged){
+          console.log("loggeado");
+          
+          this.router.navigateByUrl("home");
+        }else{
+          console.log("no logeado");
+          this.mainService.setLogginStatus(false);
+          this.showContent = true;
+        }
+      })
+
+      this.matcher = new MyErrorStateMatcher();
+      this.controls = {
+        validEmail: true,
+        validPhone: true,
+        hidePass: true, 
+        hideConfirmPass: true
+      };
+      this.checkPasswords = (group: AbstractControl):  ValidationErrors | null => { 
+        let pass = group.get('pass')?.value;
+        let confirmPass = group.get('confirmPassword')?.value
+        return pass === confirmPass ? null : { notSame: true }
+      }
+      this.registro = new FormGroup({
+        nombre: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(45)]),
+        apellido: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(45)]),
+        email: new FormControl('', [Validators.required, Validators.email]),
+        telefono: new FormControl('', Validators.required),
+        pass: new FormControl('', [Validators.required, Validators.minLength(6)]),
+        confirmPassword: new FormControl('', Validators.minLength(6)),
+        accept: new FormControl('',Validators.requiredTrue)
+      }, {validators:this.checkPasswords});
 
   }
 
   ngOnInit(): void {
   }
 
+  focusEmail(): void {
+    this.controls.validEmail = true;
+    console.log("Focus email");
+    
+  }
+
+  focusPhone(): void {
+    this.controls.validPhone = true;
+    console.log("Focus phone");
+  }
+
   onSubmit(): void{
-    this.mainService.createNewUser(this.registro.value);
+
+
+    //PARSING PHONE TO STRING
+    this.registro.value.telefono = this.registro.value.telefono.toString();
+
+    this.mainService.createNewUser(this.registro.value)
+    .subscribe((response:any)=>{
+
+      console.log(response);
+      
+
+      if(response.success){
+
+        //SUCCESS, REDIRECT
+        this.mainService.setLogginStatus(true);
+        this.router.navigateByUrl("home");
+        
+        
+      }
+      else {
+        //EMAIL REPEATEd
+        if(response.emailExists){
+          console.log("Email already used");
+
+          this.controls.validEmail = false;
+          this.registro.controls['email']?.setErrors({'incorrect': true});
+
+        }
+
+        //PHONE REPEATED
+        if(response.phoneExists){
+          console.log("Phone already used");
+
+          this.controls.validPhone = false;
+          this.registro.controls['telefono']?.setErrors({'incorrect': true});
+        }
+       
+      }
+    })
+
+    /*this.mainService.createNewUser(this.registro.value);
     this.mainService.setUserId(this.registro.value.user);
-    this.router.navigateByUrl('home');
+    this.router.navigateByUrl('home');*/
   }
 
 }
@@ -53,8 +126,8 @@ export class CreateAccountComponent implements OnInit {
 class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
 
-    if(control?.parent?.value.password.length<6) return false;
+    if(control?.parent?.value.pass.length<6) return false;
 
-    return control?.value != control?.parent?.value.password;
+    return control?.value != control?.parent?.value.pass;
   }
 }

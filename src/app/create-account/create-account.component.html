@@ -1,4 +1,5 @@
-<div class="conteiner-centered background-login">
+<waiting-page *ngIf="!showContent" message="Cargando..."></waiting-page>
+<div *ngIf="showContent" class="conteiner-centered background-login">
     
     <mat-card fxLayout="column">
         <h1 [style.alignSelf]="'center'" [style.fontSize]="'2.5rem'" [style.margin]="'20px'">Registrarse</h1>
@@ -21,16 +22,18 @@
             
             <mat-form-field appearance="fill">
                 <mat-label>Email</mat-label>
-                <input matInput formControlName="email" type="email">
+                <input matInput formControlName="email" type="email" (focus)="focusEmail()">
                 <mat-icon matSuffix>email</mat-icon>
-                <mat-error >Email no valido</mat-error>
+                <mat-error *ngIf="controls.validEmail">Email no valido</mat-error>
+                <mat-error *ngIf="!controls.validEmail">El email ya esta siendo usado por otra cuenta</mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="fill">
                 <mat-label>Numero de telefono</mat-label>
-                <input matInput formControlName="telefono" type="number">
+                <input matInput formControlName="telefono" type="number" (focus)="focusPhone()">
                 <mat-icon matSuffix>phone</mat-icon>
-                <mat-error >Telefono no valido</mat-error>
+                <mat-error *ngIf="controls.validPhone">Telefono no valido</mat-error>
+                <mat-error *ngIf="!controls.validPhone">El telefono ya registrado en otra cuenta</mat-error>
             </mat-form-field>
 
 
@@ -38,7 +41,7 @@
 
                 <mat-form-field fxFlex.gt-xs="50%" appearance="fill">
                     <mat-label>Contraseña</mat-label>
-                    <input formControlName="password" matInput [type]="controls.hidePass ? 'password' : 'text'">
+                    <input formControlName="pass" matInput [type]="controls.hidePass ? 'password' : 'text'">
                     <mat-icon (click)="controls.hidePass = !controls.hidePass" matSuffix>{{controls.hidePass ? 'visibility_off' : 'visibility'}}</mat-icon>
                     <mat-error >la contraseña debe de tener minimo 6 caracteres</mat-error>
                 </mat-form-field>

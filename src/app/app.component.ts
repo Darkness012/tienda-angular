@@ -11,6 +11,7 @@ import { MainService } from './main.service';
 export class AppComponent {
   title: string = 'Tienda';
   productos: Producto[];
+  showHome: boolean = false;
 
   constructor(private mainService: MainService, private servicioProductos: ProductosService){
     this.productos = this.servicioProductos.getAllProducts();

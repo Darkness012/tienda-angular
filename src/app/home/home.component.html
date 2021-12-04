@@ -1,10 +1,12 @@
 
-<div class="productos-contenedor" fxLayout="column">
+<waiting-page *ngIf="!showContent" message="Obteniendo productos"></waiting-page>
+<div *ngIf="showContent" class="productos-contenedor" fxLayout="column">
     <div class="header" fxLayout="row" fxLayout.lt-sm="column">
       <span class="title-header" fxFlex="1 1 auto">Catalogo de productos</span>
       <button (click)="resetFilter()" *ngIf="getFiltro()" [style.paddingRight]="'20px'" mat-raised-button color="primary">Ver todos</button>
     </div>
-
+    
+    <!-- *ngFor="let producto of (getProductos() | filter:getFiltro())"-->
     <div fxLayout="row wrap" *ngIf="(getProductos() | filter:getFiltro()).length else empty">
       <div
       class="item"
@@ -17,12 +19,12 @@
       <div>
         <mat-card class="example-card">
           <img
-            (click)="onClickProducto(producto.id)"
+            (click)="onClickProducto(producto)"
             mat-card-image
             src="../../assets/images/{{producto.nombre}}.jpg"
             alt="Photo of a Shiba Inu"
           />
-          <mat-card-content (click)="onClickProducto(producto.id)">
+          <mat-card-content (click)="onClickProducto(producto)">
             <mat-card-title >{{ producto.nombre | titlecase }}</mat-card-title>
             <h3>{{ producto.precio | currency}}</h3>
             <mat-card-subtitle>Unidades: {{producto.unidades}}</mat-card-subtitle>
@@ -39,11 +41,11 @@
               max="{{producto.unidades}}"
               class="items_amount_count"
             >
-            <button (click)="onClickAddToCart(producto.id, cantidad)" mat-raised-button color="primary">
+            <button (click)="onClickAddToCart(producto, cantidad)" mat-raised-button color="primary">
               <mat-icon>add_shopping_cart</mat-icon>
             </button>
             <button 
-              (click)="onClickProducto(producto.id)"
+              (click)="onClickProducto(producto)"
               fxHide.lt-md
               mat-button 
               color="primary"

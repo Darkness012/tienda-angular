@@ -1,0 +1,26 @@
+$iconColor: #673ab7;
+$iconSize: 250px;
+.person-icon{
+    font-size: $iconSize;
+    height: $iconSize;
+    width: $iconSize;
+    color: $iconColor;
+}
+
+.contenedor{
+    align-items: center;
+    padding: 5%;
+    width: 60%;
+    margin: 0 auto;
+}
+
+@media (max-width:900px) {
+    .contenedor{
+        width: 80%;
+    }
+}
+@media (max-width:599px) {
+    .contenedor{
+        width: 98%;
+    }
+}

@@ -27,6 +27,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProductoComponent } from './producto/producto.component';
 import { MatDialogModule} from '@angular/material/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { HttpClientModule } from '@angular/common/http';
+import { WaitingPageComponent } from './waiting-page/waiting-page.component';
+import { AccontInfoComponent } from './accont-info/accont-info.component';
+
 
 
 @NgModule({
@@ -39,7 +45,8 @@ import { MatDialogModule} from '@angular/material/dialog';
     Filter, 
     LoginComponent, 
     CreateAccountComponent, 
-    ProductoComponent
+    ProductoComponent, 
+    WaitingPageComponent, AccontInfoComponent
   ],
   imports: [
     BrowserModule,
@@ -48,6 +55,7 @@ import { MatDialogModule} from '@angular/material/dialog';
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
+    HttpClientModule,
     MatToolbarModule,
     MatIconModule,
     MatButtonModule,
@@ -60,7 +68,9 @@ import { MatDialogModule} from '@angular/material/dialog';
     MatFormFieldModule,
     MatInputModule,
     MatCheckboxModule,
-    MatDialogModule
+    MatDialogModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

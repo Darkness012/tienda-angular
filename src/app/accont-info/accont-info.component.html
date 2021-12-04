@@ -1,0 +1,18 @@
+<waiting-page *ngIf="!showContent" message="Obteniendo información..."></waiting-page>
+
+
+<mat-card *ngIf="showContent" fxLayout="column" class="contenedor">
+    <div>
+        <mat-icon class="person-icon">account_circle</mat-icon>
+    </div>
+
+    <mat-card-title >{{currentUser.nombre+" "+currentUser.apellido}}</mat-card-title>
+    <mat-card-subtitle>{{currentUser.email}}</mat-card-subtitle>
+    <mat-card-subtitle>{{currentUser.telefono}}</mat-card-subtitle>
+
+    <button (click)="onLogoutClick()" mat-raised-button color="primary">Cerrar sesion</button>
+    <div *ngIf="saliendo" [style.marginTop]="'15px'">
+        <h3>Saliendo...</h3>
+        <mat-spinner [diameter]="40" mode="indeterminate"></mat-spinner>
+    </div>
+</mat-card>

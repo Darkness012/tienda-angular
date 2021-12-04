@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ProductosService } from '../productos.service';
 
 @Component({
@@ -10,7 +11,10 @@ export class SearchBarComponent implements OnInit {
 
   searchValue:string;
 
-  constructor(private productsService: ProductosService){
+  constructor(
+    private router: Router,
+    private productsService: ProductosService
+    ){
     this.searchValue = this.productsService.getCurrentFilter();
   }
 
@@ -18,7 +22,8 @@ export class SearchBarComponent implements OnInit {
   }
 
   iniciarBusqueda():void{
-    this.productsService.setFilter(this.searchValue);
+    this.productsService.setFilter(this.searchValue.toLocaleLowerCase());
     console.log(this.productsService.getCurrentFilter())
+    this.router.navigateByUrl("home");
   }
 }

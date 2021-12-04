@@ -14,16 +14,36 @@ import { ProductoComponent } from '../producto/producto.component';
 })
 export class HomeComponent implements OnInit {
 
+  showContent: boolean = false;
+
   constructor(
-    mainService: MainService,
-    router: Router,
+    private mainService: MainService,
+    private router: Router,
     private dialog: MatDialog,
     private productosService: ProductosService, 
     private _snackBar: MatSnackBar
     ) {
 
-      if(!mainService.isLogged()) router.navigateByUrl('login');
+      if(!this.mainService.isLogged()){
+
+        //REDIRECT TO LOGIN
+        this.router.navigateByUrl("login");
+      }
+
+      //GETTING PRODUCTS
+      this.productosService.obtainProducts((success:any)=>{
+        if(success){
+          console.log("Obtenidos correctamente");
+          this.showContent = true;
+        }else{
+          this._snackBar.open("error al obtener los productos y carrito", "OK");
+        }
+      });
+
+      //GETTING CART INFO
+
   }
+
 
   ngOnInit(): void {
   }
@@ -35,49 +55,67 @@ export class HomeComponent implements OnInit {
   getFiltro(): string{
     return this.productosService.getCurrentFilter();
   }
+
   getProductos(): Producto[]{
     return this.productosService.getAllProducts();
   }
 
-  onClickProducto(id: number){
+  onClickProducto(product: any){
     this.dialog.open(ProductoComponent, {
-      data: this.productosService.getProductById(id)
+      data: product
     });
-    console.log(this.productosService.getProductById(id));
+    console.log(product);
   }
 
-  onClickAddToCart(product_id: number, elemento:any){
+  onClickAddToCart(producto: Producto, elemento:any){
     
-    let producto: Producto = this.productosService.getProductById(product_id);
     let cantidad: number = parseInt(elemento.value);
+    let producto_id = producto.id;
+
 
     if(cantidad>producto.unidades){
       alert("no hay suficientes unidades");
       elemento.value = producto.unidades;
       this._snackBar.open("seleccione una cantidad menor", "OK");
     }else{
-      let carrito = this.productosService.getCarritoDeProductos().find(x => x.producto_id === producto.id);
       
-      if(carrito){
-        carrito.count +=  cantidad; 
-        if(carrito.subtotal) carrito.subtotal += producto.precio*cantidad;
-        else carrito.subtotal == producto.precio*cantidad;
-        
-        this.productosService.updateProductsCount();
-      }
-      else { 
-        this.productosService.addItemToCart({
-            producto_id: producto.id,
-            nombre: producto.nombre,
-            precio: producto.precio,
-            count: cantidad,
-            subtotal: producto.precio*cantidad
-        })
-      }
 
-      producto.unidades -= cantidad;
-      elemento.value = 1;
-      this._snackBar.open("se agregaron "+cantidad+" "+producto.nombre+" al carrito", "OK");
+      
+      let carrito = this.productosService.getCarritoDeProductos().find(x => x.producto_id === producto.id);
+      this.productosService.addItemToCart({count:cantidad, producto_id: producto_id})
+      .subscribe((respuesta:any)=>{
+
+        console.log(respuesta);
+        
+        if(respuesta.success){
+          
+          if(carrito){
+            carrito.count +=  cantidad; 
+            if(carrito.subtotal) carrito.subtotal += producto.precio*cantidad;
+            else carrito.subtotal == producto.precio*cantidad;
+            
+          }
+          
+          else { 
+            this.productosService.getCarritoDeProductos().push({
+              producto_id: producto.id,
+              nombre: producto.nombre,
+              precio: producto.precio,
+              count: cantidad,
+              subtotal: producto.precio*cantidad
+            })
+          }
+    
+          producto.unidades -= cantidad;
+          elemento.value = 1;
+          this._snackBar.open("se agregaron "+cantidad+" "+producto.nombre+" al carrito", "OK");
+        }else{
+          console.log("ERROR: ", respuesta);
+          
+        }
+      })
+
+      
 
     }
   } 

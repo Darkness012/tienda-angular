@@ -1,4 +1,5 @@
-<div class="conteiner-centered background-login">
+<waiting-page *ngIf="!showContent" message="Cargando..."></waiting-page>
+<div *ngIf="showContent" class="conteiner-centered background-login">
     
     
     <mat-card>
@@ -11,14 +12,20 @@
             >
 
             <mat-form-field appearance="outline">
-                <mat-label>User name</mat-label>
-                <input id="name" formControlName="user" matInput >
-                
-            </mat-form-field>
+                <mat-label>Email</mat-label>
+                <input type="email" formControlName="email" matInput >
+                <mat-error *ngIf="!wrong_data">Email no valido</mat-error>
+                <mat-error *ngIf="wrong_data">El email no coincide con ninguna cuenta</mat-error>
+            </mat-form-field>   
 
             <mat-form-field  appearance="outline">
                 <mat-label>Password</mat-label>
-                <input matInput placeholder="password" type="password" formControlName="pass">
+                <input matInput placeholder="password" [type]="hidePass ? 'password' : 'text'" formControlName="pass">
+
+                <mat-icon (click)="hidePass = !hidePass" matSuffix>{{hidePass ? 'visibility_off' : 'visibility'}}</mat-icon>
+
+                <mat-error *ngIf="!wrong_pass">Contraseña debe de tener al menos 6 caracters</mat-error>
+                <mat-error *ngIf="wrong_pass">Contraseña incorrecta</mat-error>
             </mat-form-field>
 
 
@@ -30,11 +37,9 @@
         
         <div [style.alignSelf]="'center'" fxLayout="column" [style.marginTop]="'30px'" >
             <span>No tienes cuenta? </span> 
-            <button mat-button color="primary" routerLink="../createaccount" >Crear cuenta</button>
+            <button mat-button color="primary" routerLink="../register" >Crear cuenta</button>
         </div>
 
     </mat-card>
-
-    
 
 </div>
