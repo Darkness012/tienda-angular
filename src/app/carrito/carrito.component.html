@@ -11,7 +11,7 @@
         <h1>Productos en la lista</h1>
         <mat-selection-list *ngIf="getCarrito().length else loading">
           <mat-list-item *ngFor="let producto of getCarrito(); index as position">
-            <img matListAvatar src="../../assets/images/{{producto.nombre}}.jpg" alt="...">
+            <img matListAvatar [src]="'http://localhost:8080/images/'+producto.nombre" alt="...">
             <h3 matLine> {{producto.nombre | titlecase}} </h3>
             <p matLine>
               <span>Precio base: {{producto.precio | currency}} </span>

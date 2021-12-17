@@ -14,7 +14,7 @@ export class MainService {
   private urlBase: string;
   
   constructor(private http: HttpClient) { 
-    this.urlBase = "http://localhost:3000/users/";
+    this.urlBase = "http://localhost:8080/users/";
     this.loginStatus = false;
     this.getLogginStatus().subscribe((response:any)=>{
       this.loginStatus = response.isLogged?true:false;
@@ -38,7 +38,7 @@ export class MainService {
     });
   }
   validateUser(user: Usuario):Observable<object>{
-    return this.http.post(this.urlBase+"signup", user, {
+    return this.http.post(this.urlBase+"login", user, {
         
         withCredentials: true
     });
@@ -48,7 +48,7 @@ export class MainService {
 
 
     //CREATE NEW USER IN DATABASE
-    return this.http.post(this.urlBase+"create-account", user,{
+    return this.http.post(this.urlBase+"register", user,{
       headers: new HttpHeaders({
           'Access-Control-Allow-Origin':'*',
          }), withCredentials:true

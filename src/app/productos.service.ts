@@ -18,7 +18,7 @@ export class ProductosService {
   constructor(
     private http: HttpClient
   ) { 
-    this.urlBase = "http://localhost:3000/productos/";
+    this.urlBase = "http://localhost:8080/productos/";
     this.productos = [];
     this.currentFilter = '';
     this.carritoProductos = [];

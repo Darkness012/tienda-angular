@@ -1,7 +1,7 @@
 <h1 mat-dialog-title >{{producto.nombre | titlecase}}</h1>
 <div mat-dialog-content>
 
-    <img [style.maxWidth]="'100%'" [src]="'../../assets/images/'+producto.nombre+'.jpg'">
+    <img [style.maxWidth]="'100%'" [src]="'http://localhost:8080/images/'+producto.nombre">
     <h1 [style.paddingTop]="'20px'" [style.margin]="'0 0 5px'">Precio: {{ producto.precio | currency}}</h1>
     <span >Unidades restantes: {{producto.unidades}}</span>
 </div>
